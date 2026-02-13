@@ -3,74 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="manifest" href="manifest.json">
     <title>Silvester Está Alone</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com"></script>
+    <link rel="manifest" href="manifest.json">
     <style>
-        body { background-color: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
+        /* DESIGN PREMIUM ESTRUTURADO (CSS INTERNO PARA RODAR OFFLINE) */
+        body { background-color: #0f172a; color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding-bottom: 30px; }
+        
+        header { padding: 25px 10px 10px; text-align: center; background: #0f172a; }
+        header h1 { font-size: 24px; font-weight: 900; text-transform: uppercase; font-style: italic; margin: 0; letter-spacing: -1px; }
+        header .emerald { color: #10b981; }
+        header p { font-size: 10px; color: #64748b; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; }
+
+        nav { position: sticky; top: 0; z-index: 50; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid #1e293b; display: flex; }
+        nav button { flex: 1; padding: 18px 5px; background: none; border: none; color: #64748b; font-weight: 900; font-size: 11px; cursor: pointer; border-bottom: 4px solid transparent; transition: 0.3s; }
+        
+        /* Cores das Abas Ativas conforme seu pedido */
+        nav button.active-bulario { border-bottom-color: #a855f7; color: #a855f7; }
+        nav button.active-calculadora { border-bottom-color: #f97316; color: #f97316; }
+        nav button.active-premium { border-bottom-color: #94a3b8; color: #94a3b8; }
+
+        .tab-content { display: none; padding: 15px; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .active-content { display: block; }
-        .tab-bulario.active-tab { border-bottom: 4px solid #a855f7; color: #a855f7; }
-        .tab-calc.active-tab { border-bottom: 4px solid #f97316; color: #f97316; }
-        .tab-prot.active-tab { border-bottom: 4px solid #94a3b8; color: #94a3b8; }
-        .card-dark { background-color: #1e293b; border: 1px solid #334155; }
+
+        input { width: 100%; padding: 14px; border-radius: 15px; background: #1e293b; border: 1px solid #334155; color: white; box-sizing: border-box; outline: none; font-size: 16px; transition: 0.2s; }
+        input:focus { border-color: #a855f7; box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2); }
+        #busca { border-color: rgba(168, 85, 247, 0.3); margin-bottom: 20px; }
+
+        .card { background: #1e293b; border-radius: 24px; border-left: 10px solid #a855f7; padding: 18px; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); border-top: 1px solid rgba(255,255,255,0.05); }
+        .card h3 { margin: 0; color: #a855f7; text-transform: uppercase; font-style: italic; font-size: 20px; font-weight: 900; }
+        .animal-tag { font-size: 11px; background: rgba(168, 85, 247, 0.2); color: #e9d5ff; padding: 5px 10px; border-radius: 8px; font-weight: 900; border: 1px solid rgba(168, 85, 247, 0.2); }
+        
+        .info-row { font-size: 10px; color: #94a3b8; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #334155; padding-bottom: 8px; margin: 8px 0; }
+        .dose-ref { font-size: 11px; color: #d8b4fe; font-weight: bold; margin-bottom: 10px; }
+
+        .grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .full-col { grid-column: span 2; }
+        label { font-size: 9px; font-weight: 900; text-transform: uppercase; color: #64748b; margin-left: 5px; margin-bottom: 4px; display: block; }
+        
+        .res-box { background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 18px; text-align: center; display: flex; flex-direction: column; justify-content: center; padding: 5px; }
+        .res-val { font-size: 18px; font-weight: 900; color: white; font-family: monospace; }
+        
+        .dica { grid-column: span 2; font-size: 9px; color: rgba(168, 85, 247, 0.6); font-style: italic; border-top: 1px solid #334155; padding-top: 8px; margin-top: 5px; }
+        
+        /* Estilo Calculadora Laranja */
+        .card-orange { border-top: 8px solid #f97316; border-left: none; }
+        .btn-orange { background: #ea580c; width: 100%; border: none; padding: 18px; border-radius: 15px; color: white; font-weight: 900; cursor: pointer; margin-top: 15px; font-size: 14px; }
+        
+        /* Estilo Premium Cinza */
+        .premium-box { border: 2px dashed #334155; border-radius: 40px; padding: 60px 20px; text-align: center; margin-top: 20px; }
     </style>
 </head>
-<body class="pb-10">
+<body>
 
-    <header class="pt-6 pb-2 bg-[#0f172a] text-center">
-        <h1 class="text-2xl font-black tracking-tighter text-white uppercase italic">
-            Silvester <span class="text-emerald-500">Está</span> Alone
-        </h1>
-        <p class="text-[10px] text-slate-500 font-bold tracking-widest uppercase mt-1">Veterinary Offline Support</p>
+    <header>
+        <h1>SILVESTER <span class="emerald">ESTÁ</span> ALONE</h1>
+        <p>Veterinary Offline Support</p>
     </header>
 
-    <nav class="sticky top-0 z-50 bg-[#0f172a]/95 backdrop-blur-sm border-b border-slate-800 flex justify-around">
-        <button onclick="mudarAba('bulario')" class="tab-bulario active-tab py-4 px-2 text-[11px] font-black flex flex-col items-center gap-1 flex-1" id="btn-bulario">
-            <i data-lucide="book-open" class="w-5 h-5"></i> BULÁRIO
-        </button>
-        <button onclick="mudarAba('calculadora')" class="tab-calc py-4 px-2 text-[11px] font-black flex flex-col items-center gap-1 flex-1" id="btn-calculadora">
-            <i data-lucide="calculator" class="w-5 h-5"></i> CALC
-        </button>
-        <button onclick="mudarAba('premium')" class="tab-prot py-4 px-2 text-[11px] font-black flex flex-col items-center gap-1 flex-1" id="btn-premium">
-            <i data-lucide="lock" class="w-5 h-5"></i> PROTOCOLOS
-        </button>
+    <nav>
+        <button id="btn-bulario" class="active-bulario" onclick="mudarAba('bulario')">📖 BULÁRIO</button>
+        <button id="btn-calculadora" onclick="mudarAba('calculadora')">⚡ CALC</button>
+        <button id="btn-premium" onclick="mudarAba('premium')">🔒 PROTOC.</button>
     </nav>
 
-    <main id="bulario" class="tab-content active-content p-4">
-        <div class="mb-6">
-            <div class="relative">
-                <i data-lucide="search" class="absolute left-4 top-4 w-5 h-5 text-slate-500"></i>
-                <input type="text" id="busca" onkeyup="filtrarBulario()" placeholder="Animal ou Fármaco..." 
-                       class="w-full p-4 pl-12 rounded-2xl bg-slate-800 border border-purple-500/20 text-white outline-none focus:ring-2 focus:ring-purple-500">
-            </div>
-        </div>
-        <div id="lista-bulario" class="space-y-4"></div>
+    <!-- ABA 1: BULÁRIO (ROXO) -->
+    <main id="bulario" class="tab-content active-content">
+        <input type="text" id="busca" oninput="filtrarBulario()" placeholder="🔍 Buscar Animal ou Fármaco...">
+        <div id="lista-bulario"></div>
     </main>
 
-    <main id="calculadora" class="tab-content p-4">
-        <div class="card-dark p-6 rounded-3xl border-t-8 border-t-orange-500 shadow-xl">
-            <h2 class="text-orange-500 font-black mb-6 flex items-center gap-2 uppercase text-xl">
-                <i data-lucide="zap"></i> Cálculo Livre
-            </h2>
-            <div class="space-y-5">
-                <input type="number" id="pesoG" placeholder="Peso (g)" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
-                <input type="number" id="doseG" placeholder="Dose (mg/kg)" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
-                <input type="number" id="concG" placeholder="Conc. Frasco (mg/ml)" class="w-full p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none">
-                <button onclick="calcGeral()" class="w-full bg-orange-600 text-white font-black py-5 rounded-2xl active:scale-95 transition-all">CALCULAR</button>
-                <div id="resGeralCont" class="hidden mt-6 p-6 bg-slate-900 rounded-2xl border border-orange-500/30 text-center">
-                    <span id="resGeral" class="text-4xl font-black text-white">0.000</span><span class="text-orange-500 font-bold ml-1 text-xl">ml</span>
+    <!-- ABA 2: CALCULADORA (LARANJA) -->
+    <main id="calculadora" class="tab-content">
+        <div class="card card-orange">
+            <h2 style="color:#f97316; margin-top:0; font-weight: 900; font-style: italic;">CÁLCULO LIVRE</h2>
+            <label>Peso do Animal (kg)</label>
+            <input type="number" id="pesoG" step="0.001" placeholder="0.300">
+            <div class="grid-inputs">
+                <div>
+                    <label>Dose (mg/kg)</label>
+                    <input type="number" id="doseG" placeholder="10">
+                </div>
+                <div>
+                    <label>Conc (mg/ml)</label>
+                    <input type="number" id="concG" placeholder="5">
                 </div>
             </div>
+            <button class="btn-orange" onclick="calcGeral()">CALCULAR VOLUME</button>
+            <div id="resGeralCont" style="display:none; margin-top: 20px; text-align: center; background: #0f172a; padding: 20px; border-radius: 20px; border: 1px solid #f9731633;">
+                <label style="color:#f97316">Volume Total</label>
+                <div id="resGeral" style="font-size:36px; font-weight:900; color:white;">0.000 <span style="font-size:16px; color:#f97316">ml</span></div>
+            </div>
         </div>
     </main>
 
-    <main id="premium" class="tab-content p-4">
-        <div class="py-24 text-center bg-slate-800/30 rounded-[40px] border-2 border-dashed border-slate-700">
-            <i data-lucide="lock" class="w-16 h-16 mx-auto text-slate-600 mb-4"></i>
-            <h2 class="text-xl font-bold text-slate-300 uppercase">Meus Protocolos</h2>
-            <p class="text-slate-500 mt-2 px-10 text-sm">Personalize o app com suas doses favoritas.</p>
+    <!-- ABA 3: PREMIUM (CINZA) -->
+    <main id="premium" class="tab-content">
+        <div class="premium-box">
+            <div style="font-size: 50px; margin-bottom: 20px;">🔒</div>
+            <h2 style="color: #94a3b8; font-weight: 900;">MEUS PROTOCOLOS</h2>
+            <p style="color: #64748b; font-size: 14px;">Em breve: Banco de dados customizado para suas próprias doses.</p>
         </div>
     </main>
 
@@ -762,125 +794,88 @@
 let listaExibida = [...minhaPlanilha];
 
 function renderizarBulario(dados) {
-    const container = document.getElementById('lista-bulario');
-    listaExibida = dados; // Atualiza a referência global
-    
-    if (dados.length === 0) {
-        container.innerHTML = `<div class="text-center p-10 text-slate-500 italic">Nenhum resultado encontrado...</div>`;
-        return;
-    }
-
-    container.innerHTML = dados.map((m, index) => `
-        <div class="card-dark p-5 rounded-[24px] border-l-[10px] border-purple-500 shadow-xl">
-            <div class="flex justify-between items-start">
-                <h3 class="text-xl font-black text-purple-400 uppercase italic leading-tight">${m["Medicação"]}</h3>
-                <span class="text-[12px] bg-purple-900/60 text-purple-100 px-3 py-2 rounded-lg font-black tracking-wide self-start border border-purple-500/20">
-                    ${m["Animal"]}
-                </span>
-            </div>
-            <div class="mt-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest border-b border-slate-700/50 pb-2">
-                ${m["Uso"] || 'Geral'} • <span class="text-slate-500 capitalize">${m["Notas"] || ''}</span>
-            </div>
-            
-            <p class="text-[10px] text-purple-300/80 font-bold mt-2 uppercase tracking-tight">
-                Dose: ${m.doseMax ? m.doseMin + ' - ' + m.doseMax : m.doseMin} mg/kg
-            </p>
-
-            <div class="mt-4 grid grid-cols-2 gap-3">
-                <div class="col-span-2">
-                     <label class="text-[9px] text-slate-500 font-black uppercase ml-1">Peso do Animal (kg)</label>
-                     <input type="number" step="0.001" id="peso-${index}" oninput="calcAuto(${index})" placeholder="0,000 kg" 
-                            class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold outline-none focus:border-purple-500">
+            const container = document.getElementById('lista-bulario');
+            listaAtual = dados;
+            container.innerHTML = dados.map((m, i) => `
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:start">
+                        <h3>${m["Medicação"]}</h3>
+                        <span class="animal-tag">${m["Animal"]}</span>
+                    </div>
+                    <div class="info-row">
+                        ${m["Uso"] || 'GERAL'} • <i>${m["Notas"] || ''}</i>
+                    </div>
+                    <div class="dose-ref">
+                        DOSE: ${m.doseMax ? m.doseMin + ' - ' + m.doseMax : m.doseMin} mg/kg
+                    </div>
+                    <div class="grid-inputs">
+                        <div class="full-col">
+                            <label>Peso do Animal (kg)</label>
+                            <input type="number" id="p-${i}" step="0.001" oninput="calc(${i})" placeholder="0.300">
+                        </div>
+                        <div>
+                            <label>Conc. Frasco (mg/ml)</label>
+                            <input type="number" id="c-${i}" value="${m.conc || ''}" oninput="calc(${i})" placeholder="mg/ml">
+                        </div>
+                        <div class="res-box">
+                            <label style="color:#a855f7; font-size:8px">Volume (ml)</label>
+                            <span class="res-val" id="r-${i}">0.000</span>
+                        </div>
+                        <div class="dica">💡 Dica: 10% = 100mg | 1% = 10mg | 0.2% = 2mg</div>
+                    </div>
                 </div>
-                <div>
-                     <label class="text-[9px] text-purple-300 font-black uppercase ml-1">Conc. (mg/ml)</label>
-                     <input type="number" id="conc-${index}" value="${m.conc || ''}" oninput="calcAuto(${index})" placeholder="Ex: 5" 
-                            class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold outline-none focus:border-purple-500">
-                </div>
-                <div class="bg-purple-600/20 p-2 rounded-2xl border border-purple-500/30 text-center flex flex-col justify-center">
-                    <span class="text-[8px] text-purple-400 font-black uppercase">Volume (ml)</span>
-                    <span id="res-${index}" class="text-md font-black text-white leading-tight">0.000</span>
-                </div>
-
-                <div class="col-span-2 mt-2 px-1 border-t border-slate-700/30 pt-1">
-                    <p class="text-[9px] text-purple-400/70 italic leading-tight flex items-center gap-1">
-                        <i data-lucide="info" class="w-3 h-3"></i>
-                        Dica: 10% = 100mg/ml | 1% = 10mg/ml | 0,1% = 1mg/ml
-                    </p>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    // RECARREGA OS ÍCONES (Essencial para não sumirem na busca)
-    if (window.lucide) lucide.createIcons();
-}
-
-function filtrarBulario() {
-    const termo = document.getElementById('busca').value.toLowerCase();
-    const filtrados = minhaPlanilha.filter(m => 
-        (m["Animal"] && m["Animal"].toLowerCase().includes(termo)) || 
-        (m["Medicação"] && m["Medicação"].toLowerCase().includes(termo))
-    );
-    renderizarBulario(filtrados);
-}
-
-function calcAuto(index) {
-    const item = listaExibida[index]; // Usa a lista que está na tela no momento
-    const pesoKg = document.getElementById(`peso-${index}`).value;
-    const concInput = document.getElementById(`conc-${index}`).value;
-    const resDisplay = document.getElementById(`res-${index}`);
-
-    if (pesoKg > 0 && concInput > 0) {
-        let resMin = (pesoKg * item.doseMin) / concInput;
-        if (item.doseMax) {
-            let resMax = (pesoKg * item.doseMax) / concInput;
-            resDisplay.innerText = resMin.toFixed(3) + " - " + resMax.toFixed(3);
-        } else {
-            resDisplay.innerText = resMin.toFixed(3);
+            `).join('');
         }
-    } else {
-        resDisplay.innerText = "0.000";
-    }
-}
 
-
-    function filtrarBulario() {
-        const t = document.getElementById('busca').value.toLowerCase();
-        const f = minhaPlanilha.filter(m => 
-            m["Animal"].toLowerCase().includes(t) || 
-            m["Medicação"].toLowerCase().includes(t)
-        );
-        renderizarBulario(f);
-    }
-
-    function mudarAba(aba) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
-        document.getElementById(aba).classList.add('active-content');
-        document.getElementById('btn-' + aba).classList.add('active-tab');
-        lucide.createIcons();
-    }
-
-    function calcGeral() {
-        const p = document.getElementById('pesoG').value / 1000;
-        const d = document.getElementById('doseG').value;
-        const c = document.getElementById('concG').value;
-        if(p && d && c) {
-            document.getElementById('resGeralCont').classList.remove('hidden');
-            document.getElementById('resGeral').innerText = ((p * d) / c).toFixed(3);
+        function calc(i) {
+            const item = listaAtual[i];
+            const p = document.getElementById(`p-${i}`).value;
+            const c = document.getElementById(`c-${i}`).value;
+            const res = document.getElementById(`r-${i}`);
+            if (p > 0 && c > 0) {
+                let m = (p * item.doseMin) / c;
+                res.innerText = item.doseMax ? m.toFixed(3) + '-' + ((p * item.doseMax)/c).toFixed(3) : m.toFixed(3);
+                res.style.color = "#a855f7";
+            } else { 
+                res.innerText = "0.000"; 
+                res.style.color = "white";
+            }
         }
-    }
 
-    lucide.createIcons();
-    renderizarBulario(minhaPlanilha);
-        
-    if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js')
-    .then(() => console.log("Silvester está Offline!"));
-}
+        function filtrarBulario() {
+            const t = document.getElementById('busca').value.toLowerCase();
+            const f = minhaPlanilha.filter(m => 
+                (m["Animal"]||"").toLowerCase().includes(t) || 
+                (m["Medicação"]||"").toLowerCase().includes(t)
+            );
+            renderizarBulario(f);
+        }
 
-         </script>
+        function mudarAba(aba) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('active-bulario', 'active-calculadora', 'active-premium');
+            });
+            document.getElementById(aba).classList.add('active-content');
+            document.getElementById('btn-' + aba).classList.add('active-' + aba);
+            window.scrollTo(0,0);
+        }
+
+        function calcGeral() {
+            const p = document.getElementById('pesoG').value;
+            const d = document.getElementById('doseG').value;
+            const c = document.getElementById('concG').value;
+            if(p && d && c) {
+                document.getElementById('resGeralCont').style.display = "block";
+                document.getElementById('resGeral').innerHTML = ((p*d)/c).toFixed(3) + " <span style='font-size:16px'>ml</span>";
+            }
+        }
+
+        renderizarBulario(minhaPlanilha);
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(() => console.log("Offline Ativado"));
+        }
+    </script>
 </body>
 </html>
-
