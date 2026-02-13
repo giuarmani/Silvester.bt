@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VetSilvestre Pro</title>
+    <!-- Tailwind para o Design -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide para Ícones Bonitos -->
+    <script src="https://unpkg.com"></script>
+    <style>
+        .tab-content { display: none; }
+        .active-content { display: block; }
+        .active-tab { color: #059669; border-top: 3px solid #059669; }
+        body { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-24">
+
+    <!-- HEADER FIXO -->
+    <header class="bg-emerald-600 text-white p-4 shadow-md sticky top-0 z-50">
+        <h1 class="text-xl font-bold flex items-center gap-2">
+            <i data-lucide="stethoscope"></i> VetSilvestre <span class="text-xs bg-emerald-800 px-2 py-1 rounded">FREE</span>
+        </h1>
+    </header>
+
+    <!-- CONTEÚDO: ABA BULÁRIO -->
+    <main id="bulario" class="tab-content active-content p-4">
+        <div class="mb-4">
+            <input type="text" id="busca" onkeyup="filtrarBulario()" placeholder="Buscar medicamento ou espécie..." 
+                   class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+        </div>
+        <div id="lista-bulario" class="space-y-3">
+            <!-- Cards de medicamentos entram aqui via JS -->
+        </div>
+    </main>
+
+    <!-- CONTEÚRED: ABA CALCULADORA -->
+    <main id="calculadora" class="tab-content p-4">
+        <h2 class="text-lg font-bold mb-4">Calculadora de Dose</h2>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Peso do Animal (g)</label>
+                <input type="number" id="peso" placeholder="Ex: 500" class="w-full p-3 bg-gray-50 rounded-lg border">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Dose Recomendada (mg/kg)</label>
+                <input type="number" id="dose-mg" placeholder="Ex: 10" class="w-full p-3 bg-gray-50 rounded-lg border">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-600">Concentração Frasco (mg/ml)</label>
+                <input type="number" id="conc" placeholder="Ex: 50" class="w-full p-3 bg-gray-50 rounded-lg border">
+            </div>
+            <button onclick="calcular()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition">
+                Calcular Volume (ml)
+            </button>
+            <div id="resultado" class="text-center text-2xl font-bold text-emerald-700 mt-4"></div>
+        </div>
+    </main>
+
+    <!-- CONTEÚDO: ABA PREMIUM (BLOQUEADA) -->
+    <main id="premium" class="tab-content p-4 text-center">
+        <div class="py-12 px-6 bg-white rounded-3xl shadow-inner border border-dashed border-gray-300">
+            <i data-lucide="lock" class="mx-auto w-12 h-12 text-gray-400 mb-4"></i>
+            <h2 class="text-xl font-bold text-gray-800">Meus Protocolos</h2>
+            <p class="text-gray-500 mt-2 mb-6 text-sm">Crie seu banco de dados personalizado com suas próprias doses e protocolos.</p>
+            <button onclick="alert('Redirecionando para Pagamento...')" class="bg-amber-500 text-white px-8 py-3 rounded-full font-bold shadow-md active:scale-95">
+                Liberar Versão Premium
+            </button>
+        </div>
+    </main>
+
+    <!-- TAB BAR (NAVEGAÇÃO INFERIOR) -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-2 shadow-2xl z-50">
+        <button onclick="mudarAba('bulario')" class="flex flex-col items-center p-2 text-gray-400 active-tab" id="btn-bulario">
+            <i data-lucide="book-open" class="w-6 h-6"></i>
+            <span class="text-[10px] font-medium">Bulário</span>
+        </button>
+        <button onclick="mudarAba('calculadora')" class="flex flex-col items-center p-2 text-gray-400" id="btn-calculadora">
+            <i data-lucide="calculator" class="w-6 h-6"></i>
+            <span class="text-[10px] font-medium">Calculadora</span>
+        </button>
+        <button onclick="mudarAba('premium')" class="flex flex-col items-center p-2 text-gray-400" id="btn-premium">
+            <i data-lucide="database" class="w-6 h-6"></i>
+            <span class="text-[10px] font-medium">Protocolos</span>
+        </button>
+    </nav>
+
+    <script>
+        // Dados Iniciais do Bulário
+        const bulario = [
+            { nome: "Enrofloxacina", dose: "10mg/kg", especie: "Répteis", obs: "IM/SC a cada 24-48h" },
+            { nome: "Meloxicam", dose: "0.2mg/kg", especie: "Aves", obs: "PO/SC a cada 24h" },
+            { nome: "Cetamina", dose: "20-40mg/kg", especie: "Mamíferos", obs: "Contenção química" },
+            { nome: "Tramadol", dose: "5-10mg/kg", especie: "Aves", obs: "Analgesia moderada" }
+        ];
+
+        function renderizarBulario(dados) {
+            const container = document.getElementById('lista-bulario');
+            container.innerHTML = dados.map(m => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border-l-4 border-emerald-500">
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-gray-800">${m.nome}</h3>
+                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">${m.especie}</span>
+                    </div>
+                    <p class="text-emerald-700 font-bold text-sm mt-1">${m.dose}</p>
+                    <p class="text-gray-400 text-xs mt-1">${m.obs}</p>
+                </div>
+            `).join('');
+        }
+
+        function filtrarBulario() {
+            const termo = document.getElementById('busca').value.toLowerCase();
+            const filtrados = bulario.filter(m => m.nome.toLowerCase().includes(termo) || m.especie.toLowerCase().includes(termo));
+            renderizarBulario(filtrados);
+        }
+
+        function mudarAba(abaId) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-content'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active-tab'));
+            
+            document.getElementById(abaId).classList.add('active-content');
+            document.getElementById('btn-' + abaId).classList.add('active-tab');
+        }
+
+        function calcular() {
+            const peso = document.getElementById('peso').value / 1000; // g para kg
+            const dose = document.getElementById('dose-mg').value;
+            const conc = document.getElementById('conc').value;
+            
+            if(peso && dose && conc) {
+                const resultado = (peso * dose) / conc;
+                document.getElementById('resultado').innerHTML = resultado.toFixed(3) + " <span class='text-sm'>ml</span>";
+            }
+        }
+
+        // Inicializar
+        lucide.createIcons();
+        renderizarBulario(bulario);
+    </script>
+</body>
+</html>
