@@ -758,31 +758,43 @@
            
         ];
 
-    function renderizarBulario(dados) {
+  // Variável global para sabermos o que está sendo exibido
+let listaExibida = [...minhaPlanilha];
+
+function renderizarBulario(dados) {
     const container = document.getElementById('lista-bulario');
+    listaExibida = dados; // Atualiza a referência global
+    
+    if (dados.length === 0) {
+        container.innerHTML = `<div class="text-center p-10 text-slate-500 italic">Nenhum resultado encontrado...</div>`;
+        return;
+    }
+
     container.innerHTML = dados.map((m, index) => `
         <div class="card-dark p-5 rounded-[24px] border-l-[10px] border-purple-500 shadow-xl">
             <div class="flex justify-between items-start">
                 <h3 class="text-xl font-black text-purple-400 uppercase italic leading-tight">${m["Medicação"]}</h3>
-                <span class="text-[12px] bg-purple-900/70 text-purple-200 px-4 py-2 rounded font-bold self-start">${m["Animal"]}</span>
+                <span class="text-[12px] bg-purple-900/60 text-purple-100 px-3 py-2 rounded-lg font-black tracking-wide self-start border border-purple-500/20">
+                    ${m["Animal"]}
+                </span>
             </div>
             <div class="mt-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest border-b border-slate-700/50 pb-2">
                 ${m["Uso"] || 'Geral'} • <span class="text-slate-500 capitalize">${m["Notas"] || ''}</span>
             </div>
             
             <p class="text-[10px] text-purple-300/80 font-bold mt-2 uppercase tracking-tight">
-                Dose Ref: ${m.doseMax ? m.doseMin + ' - ' + m.doseMax : m.doseMin} mg/kg
+                Dose: ${m.doseMax ? m.doseMin + ' - ' + m.doseMax : m.doseMin} mg/kg
             </p>
 
             <div class="mt-4 grid grid-cols-2 gap-3">
                 <div class="col-span-2">
                      <label class="text-[9px] text-slate-500 font-black uppercase ml-1">Peso do Animal (kg)</label>
-                     <input type="number" step="0.001" id="peso-${index}" oninput="calcAuto(${index})" placeholder="Ex: 0.000 kg" 
+                     <input type="number" step="0.001" id="peso-${index}" oninput="calcAuto(${index})" placeholder="0,000 kg" 
                             class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold outline-none focus:border-purple-500">
                 </div>
                 <div>
                      <label class="text-[9px] text-purple-300 font-black uppercase ml-1">Conc. (mg/ml)</label>
-                     <input type="number" id="conc-${index}" value="${m.conc || ''}" oninput="calcAuto(${index})" placeholder="Ex: 0" 
+                     <input type="number" id="conc-${index}" value="${m.conc || ''}" oninput="calcAuto(${index})" placeholder="Ex: 5" 
                             class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-white font-bold outline-none focus:border-purple-500">
                 </div>
                 <div class="bg-purple-600/20 p-2 rounded-2xl border border-purple-500/30 text-center flex flex-col justify-center">
@@ -790,36 +802,37 @@
                     <span id="res-${index}" class="text-md font-black text-white leading-tight">0.000</span>
                 </div>
 
-                <!-- NOTA DE CONVERSÃO DE PORCENTAGEM -->
-               <div class="col-span-2 mt-2 px-1 border-t border-slate-700/30 pt-1">
-               <p class="text-[9px] text-purple-400/70 italic leading-tight flex items-center gap-1">
-              <i data-lucide="info" class="w-3 h-3"></i>
-               Dica: 10% = 100mg/ml | 1% = 10mg/ml | 0,1% = 1mg/ml
-              </p>
-            </div>
-
+                <div class="col-span-2 mt-2 px-1 border-t border-slate-700/30 pt-1">
+                    <p class="text-[9px] text-purple-400/70 italic leading-tight flex items-center gap-1">
+                        <i data-lucide="info" class="w-3 h-3"></i>
+                        Dica: 10% = 100mg/ml | 1% = 10mg/ml | 0,1% = 1mg/ml
+                    </p>
+                </div>
             </div>
         </div>
     `).join('');
-    lucide.createIcons();
+    
+    // RECARREGA OS ÍCONES (Essencial para não sumirem na busca)
+    if (window.lucide) lucide.createIcons();
+}
+
+function filtrarBulario() {
+    const termo = document.getElementById('busca').value.toLowerCase();
+    const filtrados = minhaPlanilha.filter(m => 
+        (m["Animal"] && m["Animal"].toLowerCase().includes(termo)) || 
+        (m["Medicação"] && m["Medicação"].toLowerCase().includes(termo))
+    );
+    renderizarBulario(filtrados);
 }
 
 function calcAuto(index) {
-    const termo = document.getElementById('busca').value.toLowerCase();
-    const listaAtual = termo ? minhaPlanilha.filter(m => 
-        m["Animal"].toLowerCase().includes(termo) || 
-        m["Medicação"].toLowerCase().includes(termo)
-    ) : minhaPlanilha;
-    
-    const item = listaAtual[index];
-    const pesoKg = document.getElementById(`peso-${index}`).value; // Valor direto em Kg
+    const item = listaExibida[index]; // Usa a lista que está na tela no momento
+    const pesoKg = document.getElementById(`peso-${index}`).value;
     const concInput = document.getElementById(`conc-${index}`).value;
     const resDisplay = document.getElementById(`res-${index}`);
 
     if (pesoKg > 0 && concInput > 0) {
-        // Cálculo direto: (Kg * dose) / conc
         let resMin = (pesoKg * item.doseMin) / concInput;
-        
         if (item.doseMax) {
             let resMax = (pesoKg * item.doseMax) / concInput;
             resDisplay.innerText = resMin.toFixed(3) + " - " + resMax.toFixed(3);
@@ -830,6 +843,7 @@ function calcAuto(index) {
         resDisplay.innerText = "0.000";
     }
 }
+
 
     function filtrarBulario() {
         const t = document.getElementById('busca').value.toLowerCase();
