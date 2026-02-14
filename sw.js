@@ -1,4 +1,4 @@
-const CACHE_NAME = 'silvester-v10';
+const CACHE_NAME = 'silvester-v6';
 const assets = [
   './',
   './index.html',
